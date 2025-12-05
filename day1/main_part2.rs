@@ -6,9 +6,12 @@ fn main() {
 
     let turns = contents.split("\n");
     let mut count = 0;
+
     for turn in turns {
         let dir = &turn[0..1];
         let amount = turn[1..].parse::<i32>().unwrap();
+        let prev = dial_pos;
+
         match dir {
             "R" => dial_pos = (dial_pos + amount) % 100,
             "L" => dial_pos = (dial_pos - amount) % 100,
@@ -16,12 +19,23 @@ fn main() {
         }
 
         if dial_pos < 0 {
-            dial_pos = 100 + dial_pos;
+            dial_pos += 100;
+        }
+        // println!("from {} to {} {} -> {}", prev, dir, amount, dial_pos);
+
+        if dir == "R" {
+            count += (prev + amount) / 100;
+        }
+        if dir == "L" {
+            if prev - amount <= 0 {
+                count += 1 - ((prev - amount) / 100)
+            }
+            if prev == 0 {
+                count -= 1
+            }
         }
 
-        if dial_pos == 0 {
-            count += 1
-        }
+        // println!("Count is now {}", count);
     }
     println!("{count}");
 }
